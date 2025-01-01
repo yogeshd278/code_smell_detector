@@ -31,20 +31,36 @@ let detect_nested_ifs lines =
   in
   aux 0 [] 1 lines
 
+let print_smells file_name long_lines nested_ifs =
+  printf "===== JavaScript Code Smell Detector =====\n\n";
+  printf "🚨 Issues Detected:\n\n";
+
+  if long_lines <> [] then (
+    printf "1. **Long Lines (exceeding 80 characters)**:\n";
+    List.iter (fun (line_num, len, line) ->
+      printf "   - Line %d: `%s`\n" line_num line;
+      printf "     🔎 Length: %d characters. Consider breaking this line into smaller parts.\n" len;
+    ) long_lines
+  ) else printf "1. **Long Lines**: None detected.\n";
+
+  if nested_ifs <> [] then (
+    printf "\n2. **Deeply Nested If Statements (max recommended depth: 3)**:\n";
+    List.iter (fun (line_num, line) ->
+      printf "   - Line %d: `%s`\n" line_num line;
+      printf "     🔎 Refactor to reduce nesting levels for better readability and maintainability.\n";
+    ) nested_ifs
+  ) else printf "\n2. **Deeply Nested If Statements**: None detected.\n";
+
+  printf "\n---------------------------------------------\n";
+  printf "✅ Scanned File: %s\n" file_name;
+  printf "📝 Total Smells Found: %d\n" (List.length long_lines + List.length nested_ifs);
+  printf "📘 Need Help? Visit our guide: https://github.com/yogeshd278\n"
+
 let analyze file =
   let lines = read_lines file in
   let long_lines = detect_long_lines lines 80 in
   let nested_ifs = detect_nested_ifs lines in
-  
-  printf "Long lines:\n";
-  List.iter (fun (line_num, len, line) ->
-    printf "  Line %d: %s (%d characters)\n" line_num line len
-  ) long_lines;
-  
-  printf "\nNested ifs:\n";
-  List.iter (fun (line_num, line) ->
-    printf "  Line %d: %s\n" line_num line
-  ) nested_ifs
+  print_smells file long_lines nested_ifs
 
 let () =
   if Array.length Sys.argv <> 2 then

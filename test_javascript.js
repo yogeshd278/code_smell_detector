@@ -11,12 +11,13 @@ function sum(a, b) {
 
 // Nested if blocks
 if (true) {
+  if (true) {
     if (true) {
-        if (true) {
-            console.log("This is a deeply nested if block.");
-        }
+      console.log("This is a deeply nested if block.");
     }
+  }
 }
+
 
 // Extra semicolon
 let x = 5;;
